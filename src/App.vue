@@ -1,9 +1,8 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
-<!--    路由出口：路由跳转显示在下面的位置-->
-    <router-view/>
+    Hello 段航!
   </div>
+
 </template>
 
 <script>
@@ -12,13 +11,14 @@ export default {
 }
 </script>
 
-<style>
-#app {
+<style lang="stylus" rel="stylesheet/stylus">
+#app
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
+  font-size: 150px;
   color: #2c3e50;
   margin-top: 60px;
-}
+
 </style>
