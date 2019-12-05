@@ -1,10 +1,12 @@
 <template>
-  个人中心
+  <div>
+    hahah
+  </div>
 </template>
 
 <script>
     export default {
-        name: "FooterGuide"
+
     }
 </script>
 

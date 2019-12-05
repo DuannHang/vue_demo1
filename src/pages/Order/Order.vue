@@ -1,10 +1,12 @@
 <template>
-  订单
+  <div>
+    hahah
+  </div>
 </template>
 
 <script>
     export default {
-        name: "FooterGuide"
+
     }
 </script>
 
