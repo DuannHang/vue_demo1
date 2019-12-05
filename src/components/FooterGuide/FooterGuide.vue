@@ -52,7 +52,7 @@
       to="/profile"
       icon="friends"
     >
-      搜索
+      用户中心
     </van-tabbar-item>
   </van-tabbar>
 </template>
