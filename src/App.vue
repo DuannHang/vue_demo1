@@ -5,7 +5,7 @@
     <!-- 路由匹配到的组件将渲染在这里 -->
     <router-view></router-view>
     <!--    下面FooterGuide作为导航-->
-    <FooterGuide></FooterGuide>
+    <FooterGuide v-show="$route.meta.showFooter"></FooterGuide>
   </div>
 
 
