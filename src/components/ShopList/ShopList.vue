@@ -2,27 +2,30 @@
   <!--首页附近商家-->
   <div class="msite_shop_list">
     <div class="shop_header">
-      <van-icon name="bars" />
+      <van-icon name="bars"/>
       <span class="shop_header_title">附近商家</span>
     </div>
     <div class="shop_container">
-      <ul class="shop_list">
-        <li class="shop_li border-1px">
+      <ul class="shop_list" v-if="shop.length>0">
+        <!--动态获取商家列表-->
+        <!--<li class="shop_li border-1px" v-for="(shop,index) in shops" :key="index">
           <a>
             <div class="shop_left">
-              <img class="shop_img" src="./images/shop/1.jpg">
+              <img class="shop_img" :src="baseImageUrl+shop.image_path">
             </div>
             <div class="shop_right">
               <section class="shop_detail_header">
-                <h4 class="shop_title ellipsis">锄禾日当午，汗滴禾下土</h4>
+                <h4 class="shop_title ellipsis">{{shop.name}}</h4>
+                &lt;!&ndash;优惠活动&ndash;&gt;
                 <ul class="shop_detail_ul">
-                  <li class="supports">保</li>
-                  <li class="supports">准</li>
-                  <li class="supports">票</li>
+                  <li class="supports" v-for="(support,index)in shop.supports" :key="index">
+                    {{support.icon_name}}
+                  </li>
                 </ul>
               </section>
               <section class="shop_rating_order">
                 <section class="shop_rating_order_left">
+                  &lt;!&ndash;评分星星展示&ndash;&gt;
                   <div class="star star-24">
                     <span class="star-item on"></span>
                     <span class="star-item on"></span>
@@ -30,27 +33,31 @@
                     <span class="star-item half"></span>
                     <span class="star-item off"></span>
                   </div>
+                  &lt;!&ndash;评分数字&ndash;&gt;
                   <div class="rating_section">
-                    3.6
+                    ｛｛shop.rating｝｝
                   </div>
+                  &lt;!&ndash;销量&ndash;&gt;
                   <div class="order_section">
-                    月售106单
+                    月售｛｛shop.recent_order_num｝｝单
                   </div>
                 </section>
                 <section class="shop_rating_order_right">
-                  <span class="delivery_style delivery_right">硅谷专送</span>
+                  <span class="delivery_style delivery_right">｛｛shop.delivery_mode.text｝｝</span>
                 </section>
               </section>
               <section class="shop_distance">
+                &lt;!&ndash;配送信息&ndash;&gt;
                 <p class="shop_delivery_msg">
-                  <span>¥20起送</span>
+                  <span>¥｛｛shop.float_minmum_order_amount｝｝起送</span>
                   <span class="segmentation">/</span>
-                  <span>配送费约¥5</span>
+                  <span>配送费约¥{{shop.float_delivery_fee}}</span>
                 </p>
               </section>
             </div>
           </a>
-        </li>
+        </li>-->
+        <!--静态页面--由于后台端口没有通，所以暂时使用的是静态页面代替-->
         <li class="shop_li border-1px">
           <a>
             <div class="shop_left">
@@ -184,14 +191,31 @@
           </a>
         </li>
       </ul>
+      <!--当未获取到商家分类列表时，加载背景图-->
+      <ul class="shop_list" v-else>
+        <li v-for="(item,index) in 6" :key="index">
+          <img src="./images/shop_back.svg" alt="shops_not_prepared_backSVG">
+        </li>
+      </ul>
     </div>
   </div>
 </template>
 
 <script>
-    export default {
-        name: "ShopList"
-    }
+  import {mapState} from 'vuex'
+
+  export default {
+    name: 'ShopList',
+    data () {
+      return {
+        baseImageUrl: 'http://cangdu.org:8081/img/',
+      }
+    },
+    computed: {
+      ...mapState(['shops',])
+    },
+
+  }
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus" scoped>

@@ -3,19 +3,27 @@
   <div class="on">
     <section class="msite">
       <!--首页头部-->
-      <HeaderTop title="天府三街666号">
+      <HeaderTop :title="address.name">
         <span class="header_search" slot="left">
             <i class="iconfont icon-sousuo"></i>
         </span>
         <span class="header_login" slot="right">
             <span class="header_login_text">登录|注册</span>
-          </span>
-
+        </span>
       </HeaderTop>
       <!--首页导航-->
       <nav class="msite_nav">
-        <div class="swiper-container">
+        <div class="swiper-container" v-if="categorys.length>0">
           <div class="swiper-wrapper">
+            <!-- 动态获取食品分类的轮播图-->
+            <!--<div class="swiper-slide" v-for="(categorys,index) in categorysArr" :key="index">
+              <a href="javascript:;" class="link_to_food" v-for="(category,index) in categorys" :key="index">
+                <div class="food_container">
+                  <img :src="baseImageUrl+category.image_url">
+                </div>
+                <span>{{category.title}}</span>
+              </a>
+            </div>-->
             <div class="swiper-slide">
               <a href="javascript:" class="link_to_food">
                 <div class="food_container">
@@ -120,6 +128,8 @@
           <!-- Add Pagination -->
           <div class="swiper-pagination"></div>
         </div>
+        <!--当v-if的条件没成立--categorys没有加载完全的时候，就显示一个背景图-->
+        <img src="./images/msite_back.svg" alt="categorys_not_prepared_backSVG" v-else>
       </nav>
       <!--首页附近商家-->
       <ShopList></ShopList>
@@ -128,44 +138,124 @@
 </template>
 
 <script>
-    import HeaderTop from "../../components/HeaderTop/HeaderTop"
-    import ShopList from "../../components/ShopList/ShopList"
-    //swiper插件 手机端的滑动效果
-    import Swiper from 'swiper'
-    import 'swiper/css/swiper.min.css'
+  import HeaderTop from '../../components/HeaderTop/HeaderTop'
+  import ShopList from '../../components/ShopList/ShopList'
+  //swiper插件 手机端的滑动效果
+  import Swiper from 'swiper'
+  import 'swiper/css/swiper.min.css'
+  //映射函数
+  import {mapState} from 'vuex'
 
-
-
-    export default {
-        mounted() {
-            //创建一个swiper实例对象，实现手机滑动轮播
-            new Swiper('.swiper-container', {
-                // direction: 'vertical', // 垂直切换选项
-                loop: true, // 循环模式选项
-                // 如果需要分页器
-                pagination: {
-                    el: '.swiper-pagination',
-                },
-
-                // 如果需要前进后退按钮
-                navigation: {
-                    nextEl: '.swiper-button-next',
-                    prevEl: '.swiper-button-prev',
-                },
-
-                // 如果需要滚动条
-                scrollbar: {
-                    el: '.swiper-scrollbar',
-                },
-            })
+  export default {
+    mounted () {
+      //这一步其实有待考虑的---categorys对象数据未获取之前，不应该实例化swiper，所以这个实例化语句，应该写在watch属性里面
+      new Swiper('.swiper-container', {
+        // direction: 'vertical', // 垂直切换选项
+        loop: true, // 循环模式选项
+        // 如果需要分页器
+        pagination: {
+          el: '.swiper-pagination',
         },
-        components: {
-            HeaderTop,
-            ShopList,
 
-        }
+        // 如果需要前进后退按钮
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev',
+        },
 
+        // 如果需要滚动条
+        scrollbar: {
+          el: '.swiper-scrollbar',
+        },
+      })
+    },
+    data () {
+      return {
+        //动态轮播图的基本路径
+        baseImageUrl: 'https://fuss10.elemecdn.com',
+      }
+    },
+    components: {
+      HeaderTop,
+      ShopList,
+    },
+    computed: {
+      //前端使用state里面的数据
+      ...mapState(['address', 'categorys']),
+      //  计算食品分类的分页数（有几页需要滑动的）
+      categorysArr () {
+        const {categorys} = this
+        //  准备空的二维数据
+        const arr = []
+        let minArr = []
+        categorys.forEach(c => {
+          if (minArr.length === 0) {
+            arr.push(minArr)
+          }
+          if (minArr.length < 8) {
+            minArr.push(c)
+          } else {
+            //  minArr.length=8了
+            minArr = []
+          }
+        })
+        return arr
+      }
+    },
+    //监视watch -- categorys有了数据，才初始化这个swiper--看watch属性里的做法
+    watch: {
+      categorys (comeValue) {
+        //settimeout可以实现，但是效果不算最好
+        // setTimeout(()=>{
+        //   //创建一个swiper实例对象，实现手机滑动轮播
+        //   new Swiper('.swiper-container', {
+        //     // direction: 'vertical', // 垂直切换选项
+        //     loop: true, // 循环模式选项
+        //     // 如果需要分页器
+        //     pagination: {
+        //       el: '.swiper-pagination',
+        //     },
+        //
+        //     // 如果需要前进后退按钮
+        //     navigation: {
+        //       nextEl: '.swiper-button-next',
+        //       prevEl: '.swiper-button-prev',
+        //     },
+        //
+        //     // 如果需要滚动条
+        //     scrollbar: {
+        //       el: '.swiper-scrollbar',
+        //     },
+        //   })
+        // },100)
+
+        // 数据更新--》 界面更新--》创建swiper对象
+        //   this.nextTick(()=>{
+        //     new Swiper('.swiper-container', {
+        //       // direction: 'vertical', // 垂直切换选项
+        //       loop: true, // 循环模式选项
+        //       // 如果需要分页器
+        //       pagination: {
+        //         el: '.swiper-pagination',
+        //       },
+        //
+        //       // 如果需要前进后退按钮
+        //       navigation: {
+        //         nextEl: '.swiper-button-next',
+        //         prevEl: '.swiper-button-prev',
+        //       },
+        //
+        //       // 如果需要滚动条
+        //       scrollbar: {
+        //         el: '.swiper-scrollbar',
+        //       },
+        //     })
+        //   })
+
+      }
     }
+
+  }
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus" scoped>

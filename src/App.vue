@@ -13,16 +13,24 @@
 
 <script>
     import FooterGuide from "./components/FooterGuide/FooterGuide";
-
+    //映射函数
+    import {mapActions} from 'vuex'
     export default {
         name: 'App',
         mounted() {
-             this.$store.dispatch('getAddress')
+             //获取地址栏的实时地址
+             // this.$store.dispatch('getAddress')
+        //  获取食品分类的轮播--前端请求数据
+        //   this.$store.dispatch('getFoodCategorys')
+        // this.$store.dispatch('getShops')
         },
         components: {
             FooterGuide,
-
-        }
+        },
+      methods:{
+          //前端获取数据，存储在vuex中
+          ...mapActions(['getAddress','categorys','getShops'])
+      }
     }
 </script>
 
