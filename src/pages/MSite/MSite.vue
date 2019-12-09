@@ -13,9 +13,9 @@
       </HeaderTop>
       <!--首页导航-->
       <nav class="msite_nav">
-        <div class="swiper-container" v-if="categorys.length>0">
-          <div class="swiper-wrapper">
-            <!-- 动态获取食品分类的轮播图-->
+        <!-- 动态获取食品分类的轮播图-->
+        <!--<div class="swiper-container" v-if="categorys.length>0">
+          <div class="swiper-wrapper">-->
             <!--<div class="swiper-slide" v-for="(categorys,index) in categorysArr" :key="index">
               <a href="javascript:;" class="link_to_food" v-for="(category,index) in categorys" :key="index">
                 <div class="food_container">
@@ -24,6 +24,8 @@
                 <span>{{category.title}}</span>
               </a>
             </div>-->
+            <div class="swiper-container">
+              <div class="swiper-wrapper">
             <div class="swiper-slide">
               <a href="javascript:" class="link_to_food">
                 <div class="food_container">
@@ -129,7 +131,7 @@
           <div class="swiper-pagination"></div>
         </div>
         <!--当v-if的条件没成立--categorys没有加载完全的时候，就显示一个背景图-->
-        <img src="./images/msite_back.svg" alt="categorys_not_prepared_backSVG" v-else>
+        <!--<img src="./images/msite_back.svg" alt="categorys_not_prepared_backSVG" v-else>-->
       </nav>
       <!--首页附近商家-->
       <ShopList></ShopList>

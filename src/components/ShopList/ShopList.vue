@@ -6,9 +6,10 @@
       <span class="shop_header_title">附近商家</span>
     </div>
     <div class="shop_container">
-      <ul class="shop_list" v-if="shop.length>0">
+
+      <!--<ul class="shop_list" v-if="shop.length>0">-->
         <!--动态获取商家列表-->
-        <!--<li class="shop_li border-1px" v-for="(shop,index) in shops" :key="index">
+       <!-- <li class="shop_li border-1px" v-for="(shop,index) in shops" :key="index">
           <a>
             <div class="shop_left">
               <img class="shop_img" :src="baseImageUrl+shop.image_path">
@@ -26,13 +27,21 @@
               <section class="shop_rating_order">
                 <section class="shop_rating_order_left">
                   &lt;!&ndash;评分星星展示&ndash;&gt;
-                  <div class="star star-24">
-                    <span class="star-item on"></span>
-                    <span class="star-item on"></span>
-                    <span class="star-item on"></span>
-                    <span class="star-item half"></span>
-                    <span class="star-item off"></span>
-                  </div>
+                  &lt;!&ndash; <div class="star star-24">
+                     <span class="star-item on"></span>
+                     <span class="star-item on"></span>
+                     <span class="star-item on"></span>
+                     <span class="star-item half"></span>
+                     <span class="star-item off"></span>
+                   </div>&ndash;&gt;
+                  <van-rate
+                    v-model="4.7"
+                    size="10px"
+                    readonly
+                    allow-half
+                    void-icon="star"
+                    void-color="#eee"
+                  />
                   &lt;!&ndash;评分数字&ndash;&gt;
                   <div class="rating_section">
                     ｛｛shop.rating｝｝
@@ -58,6 +67,7 @@
           </a>
         </li>-->
         <!--静态页面--由于后台端口没有通，所以暂时使用的是静态页面代替-->
+      <ul class="shop_list" >
         <li class="shop_li border-1px">
           <a>
             <div class="shop_left">
@@ -75,14 +85,18 @@
               <section class="shop_rating_order">
                 <section class="shop_rating_order_left">
                   <div class="star star-24">
-                    <span class="star-item on"></span>
-                    <span class="star-item on"></span>
-                    <span class="star-item on"></span>
-                    <span class="star-item on"></span>
-                    <span class="star-item off"></span>
+                    <!--vant组件-->
+                    <van-rate
+                      v-model="2.7"
+                      size="10px"
+                      readonly
+                      allow-half
+                      void-icon="star"
+                      void-color="#eee"
+                    />
                   </div>
                   <div class="rating_section">
-                    4.1
+                    2.7
                   </div>
                   <div class="order_section">
                     月售106单
@@ -192,30 +206,30 @@
         </li>
       </ul>
       <!--当未获取到商家分类列表时，加载背景图-->
-      <ul class="shop_list" v-else>
+      <!--<ul class="shop_list" v-else>
         <li v-for="(item,index) in 6" :key="index">
           <img src="./images/shop_back.svg" alt="shops_not_prepared_backSVG">
         </li>
-      </ul>
+      </ul>-->
     </div>
   </div>
 </template>
 
 <script>
-  import {mapState} from 'vuex'
+    import {mapState} from 'vuex'
 
-  export default {
-    name: 'ShopList',
-    data () {
-      return {
-        baseImageUrl: 'http://cangdu.org:8081/img/',
-      }
-    },
-    computed: {
-      ...mapState(['shops',])
-    },
+    export default {
+        name: 'ShopList',
+        data() {
+            return {
+                baseImageUrl: 'http://cangdu.org:8081/img/',
+            }
+        },
+        computed: {
+            ...mapState(['shops',])
+        },
 
-  }
+    }
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus" scoped>
