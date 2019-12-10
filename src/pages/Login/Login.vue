@@ -44,11 +44,13 @@
                 </section>
                 <section class="login_message">
                   <input type="text" maxlength="11" placeholder="验证码" v-model="captcha">
+                  <!--后台是一个请求接口，直接放链接就好-->
+                  <!--                  <img class="get_verification"  ref="captcha" src="http://localhost:4000" alt="captcha" @click="getCpatcha()">-->
                   <img class="get_verification" src="./images/captcha.svg" alt="captcha">
                 </section>
               </section>
             </div>
-            <button class="login_submit" @click="login()">登录</button>
+            <button class="login_submit" @click="login">登录</button>
           </form>
           <a href="javascript:;" class="about_us">关于我们</a>
         </div>
@@ -61,106 +63,178 @@
 </template>
 
 <script>
-    // <!--调用api接口-->
-    import {reqSendCode} from '../../api/index'
-    //vant的弹出窗函数--引入
-    import {Dialog} from 'vant';
+  // <!--调用api接口-->
+  import {reqSendCode, reqSmsLogin, reqPwdLogin} from '../../api/index'
+  //vant的弹出窗函数--引入
+  import {Dialog} from 'vant'
 
-    export default {
-        name: "Login",
-        data() {
-            return {
-                //true代表短信登录，false代表用户账户登录
-                loginByPhoneNum: true,
-                //手机号
-                phone: '',
-                //验证码发送计时器
-                Timer: '',
-                //验证码
-                code: '',
-                //是否显示密码
-                showPwd: false,
-                //登录名
-                loginName: '',
-                //登录密码
-                loginPwd: '',
-                //验证码
-                captcha: ''
+  export default {
+    name: 'Login',
+    data () {
+      return {
+        //true代表短信登录，false代表用户账户登录
+        loginByPhoneNum: true,
+        //手机号
+        phone: '',
+        //验证码发送计时器
+        Timer: '',
+        //验证码
+        code: '',
+        //是否显示密码
+        showPwd: false,
+        //登录名
+        loginName: '',
+        //登录密码
+        loginPwd: '',
+        //验证码
+        captcha: ''
+      }
+    },
+    components: {
+      //vant的弹出窗函数--注册
+      [Dialog.Component.name]: Dialog.Component
+    },
+    computed: {
+      //检查手机号格式
+      checkPhone () {
+        return /^1\d{10}$/.test(this.phone)
+      }
+    },
+    methods: {
+      //获取短信验证码
+      async getCheckCode () {
+        //如果当前没有计时--才启动倒计时，不然多次点击会产生多个计时，出现bug
+        if (this.Timer == 0) {
+          //    1`启动倒计时
+          this.Timer = 30
+          this.intervalID = setInterval(() => {
+            this.Timer--
+            if (this.Timer <= 0) {
+              clearInterval(this.intervalID)
             }
-        },
-        components: {
-            //vant的弹出窗函数--注册
-            [Dialog.Component.name]: Dialog.Component
-        },
-        computed: {
-            //检查手机号格式
-            checkPhone() {
-                return /^1\d{10}$/.test(this.phone)
+          }, 1000)
+          //    2·发送ajax请求
+          const result = await reqSendCode(this.phone)
+          //失败
+          if (result.code === 1) {
+            //显示提示--发送失败
+            Dialog.alert({
+              message: result.msg
+            })
+            //  停止计时
+            if (this.Timer) {
+              this.Timer = 0
+              clearInterval(this.intervalID)
+              //置空
+              this.intervalID = undefined
             }
-        },
-        methods: {
-            //获取短信验证码
-            async getCheckCode() {
-                //如果当前没有计时--才启动倒计时，不然多次点击会产生多个计时，出现bug
-                if (this.Timer == 0) {
-                    //    1`启动倒计时
-                    this.Timer = 30
-                    const intervalID = setInterval(() => {
-                        this.Timer--
-                        if (this.Timer <= 0) {
-                            clearInterval(intervalID)
-                        }
-                    }, 1000)
-                    //    2·发送ajax请求
-                    await reqSendCode(this.phone)
-                }
-            },
-            //前台登录表单验证
-            login() {
-                //登录方式true-短信登录
-                if (this.loginByPhoneNum) {
-                    const {phone, code, checkPhone} = this
-                    if (!checkPhone) {
-                        //手机号不正确
-                        Dialog.alert({
-                            message: '手机号不正确'
-                        })
-                    } else if (!/^\d{6}$/.test(code)) {
-                        //验证码不正确
-                        Dialog.alert({
-                            message: '验证码不正确'
-                        })
-                    }
-                    // 发送短信登录信息
-
-                } else {
-                    //登录方式false-帐号登录
-                    const {loginName, loginPwd, captcha} = this
-                    if (!loginName) {
-                        //输入用户名
-                        Dialog.alert({
-                            message: '输入用户名'
-                        })
-                    } else if (!loginPwd) {
-                        //密码错误
-                        Dialog.alert({
-                            message: '密码错误'
-                        })
-                    } else if (!captcha) {
-                        //验证码未指定
-                        Dialog.alert({
-                            message: '验证码未指定'
-                        })
-                    }
-                    //发送帐号登录信息
-
-
-                }
-
-            }
-
+          }
         }
+      },
+      //前台登录表单验证
+      async login () {
+        //登录方式true-短信登录
+        if (this.loginByPhoneNum) {
+          const {phone, code, checkPhone} = this
+          if (!checkPhone) {
+            //手机号不正确
+            Dialog.alert({
+              message: '手机号不正确'
+            })
+            return
+          } else if (!/^\d{6}$/.test(code)) {
+            //验证码不正确
+            Dialog.alert({
+              message: '验证码不正确'
+            })
+            //刷新验证码
+            this.getCpatcha()
+            return
+          }
+          // 发送短信登录信息--ajax
+          const result = await reqSmsLogin(phone, code)
+          //登录成功
+          if (result.code === 0) {
+            const user = result.data
+            //  保存user到vuex中的state
+            this.$store.dispatch('getUer', user)
+            //路由跳转到profile
+            this.$router.replace('/profile')
+
+          } else {
+            //登录失败
+            Dialog.alert({
+              message: result.msg
+            })
+            //刷新验证码
+            this.getCpatcha()
+            //  停止计时
+            if (this.Timer) {
+              this.Timer = 0
+              clearInterval(this.intervalID)
+              //置空
+              this.intervalID = undefined
+            }
+          }
+        } else {
+          //登录方式false-帐号登录
+          const {loginName, loginPwd, captcha} = this
+          if (!loginName) {
+            //输入用户名
+            Dialog.alert({
+              message: '输入用户名'
+            })
+            return
+          } else if (!loginPwd) {
+            //密码错误
+            Dialog.alert({
+              message: '密码错误'
+            })
+            return
+          } else if (!captcha) {
+            //验证码未指定
+            Dialog.alert({
+              message: '验证码未指定'
+            })
+            //刷新验证码
+            this.getCpatcha()
+            return
+          }
+          //发送帐号登录信息--ajax
+          const result = await reqPwdLogin(name, loginPwd, captcha)
+          //登录成功
+          if (result.code === 0) {
+            const user = result.data
+            //  保存user到vuex中的state
+            this.$store.dispatch('getUer', user)
+            //路由跳转到profile
+            this.$router.replace('/profile')
+          } else {
+            //登录失败
+            Dialog.alert({
+              message: result.msg
+            })
+            //刷新验证码
+            this.getCpatcha()
+            //  停止计时
+            if (this.Timer) {
+              this.Timer = 0
+              clearInterval(this.intervalID)
+              //置空
+              this.intervalID = undefined
+            }
+          }
+        }
+
+      },
+      //获取新的图片验证码
+      getCpatcha () {
+        //每次点击的src是不一样的，就能保证获取不同的验证码
+        this.$refs.captcha.src = 'http://localhost:4000/captcha?time=' + Date.now()
+      },
+
     }
+  }
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus" scoped>

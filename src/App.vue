@@ -29,7 +29,7 @@
         },
       methods:{
           //前端获取数据，存储在vuex中
-          ...mapActions(['getAddress','categorys','getShops'])
+          ...mapActions(['getAddress','getFoodCategorys','getShops'])
       }
     }
 </script>

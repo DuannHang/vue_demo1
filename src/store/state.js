@@ -15,4 +15,7 @@ export default {
   categorys: [],
   //商家数组
   shops: [],
+  //用户登录信息
+  user:{},
+
 }
