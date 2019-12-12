@@ -4,7 +4,7 @@
     <section class="profile">
       <HeaderTop title="用户中心"></HeaderTop>
       <section class="profile-number">
-        <router-link to="/login" class="profile-link">
+        <router-link :to="user._id ? '/userinfo':'/login'" class="profile-link">
           <div class="profile_image">
             <i class="iconfont icon-person"></i>
           </div>
@@ -18,7 +18,8 @@
             </p>
           </div>
           <span class="arrow">
-              <i class="iconfont icon-jiantou1"></i>
+            <!--  <i class="iconfont icon-jiantou1"></i>-->
+            <van-icon color="white" name="arrow"/>
           </span>
         </router-link>
       </section>

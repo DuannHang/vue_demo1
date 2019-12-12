@@ -5,10 +5,11 @@ import router from './router'
 //vueX
 import store from './store'
 //vant
-import Vant from 'vant';
-import 'vant/lib/index.css';
+import Vant from 'vant'
+import 'vant/lib/index.css'
 
-Vue.use(Vant);
+Vue.config.devtools = true
+Vue.use(Vant)
 
 
 Vue.config.productionTip = false
